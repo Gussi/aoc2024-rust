@@ -25,6 +25,7 @@ fn main() {
             let answer = match day {
                 1 => match part {
                     1 => day1::part1(&input),
+                    2 => day1::part2(&input),
                     _ => panic!("Invalid part"),
                 },
                 _ => panic!("Invalid day"),
@@ -58,8 +59,41 @@ pub mod day1 {
     }
 
     #[test]
-    pub fn test_part1() {
+    fn test_part1() {
         let input = "3   4\n4   3\n2   5\n1   3\n3   9\n3   3";
         assert_eq!(part1(input), 11);
+    }
+
+    pub fn part2(input: &str) -> i32 {
+        let mut first_list_of_numbers = Vec::new();
+        let mut second_list_of_numbers = Vec::new();
+
+        for line in input.lines() {
+            let mut numbers = line.split("   ");
+            first_list_of_numbers.push(numbers.next().unwrap().parse::<i32>().unwrap());
+            second_list_of_numbers.push(numbers.next().unwrap().parse::<i32>().unwrap());
+        }
+
+        first_list_of_numbers.sort();
+        second_list_of_numbers.sort();
+
+        let mut total_similarity = 0;
+
+        // Loop through first list of numbers
+        for number in first_list_of_numbers.iter() {
+            // Find number of occurences of this number in second list
+            let occurences = second_list_of_numbers.iter().filter(|&n| n == number).count() as i32;
+
+            // Multiply our number by the number of occurences, add to total similarity
+            total_similarity += number * occurences;
+        }
+
+        total_similarity
+    }
+
+    #[test]
+    fn test_part2() {
+        let input = "3   4\n4   3\n2   5\n1   3\n3   9\n3   3";
+        assert_eq!(part2(input), 31);
     }
 }
