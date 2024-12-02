@@ -1,7 +1,7 @@
 use std::io::Read;
 use clap::Parser;
 
-pub mod day1;
+pub mod day;
 
 #[derive(Parser, Debug)]
 #[clap(name = "aoc", version = "1.0", author = "Gussi", about = "Advent of Code 2024")]
@@ -23,8 +23,8 @@ fn main() {
         Args { day, part } => {
             let answer = match day {
                 1 => match part {
-                    1 => day1::part1(&input),
-                    2 => day1::part2(&input),
+                    1 => day::one::part::one(&input),
+                    2 => day::one::part::two(&input),
                     _ => panic!("Invalid part"),
                 },
                 _ => panic!("Invalid day"),
