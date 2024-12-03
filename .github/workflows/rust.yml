@@ -17,10 +17,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build
-      run: cargo build
+      run: cargo build --release
     - name: Run tests
       run: cargo test
     - name: Save build
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
-        name: build
+        name: aoc2024-rust
+        path: target/release/aoc2024-rust
