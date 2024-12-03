@@ -1,4 +1,4 @@
-name: Rust
+name: Test and build
 
 on:
   push:
@@ -11,17 +11,10 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --release
-    - name: Run tests
+    - name: Test
       run: cargo test
-    - name: Save build
-      uses: actions/upload-artifact@v4
-      with:
-        name: aoc2024-rust
-        path: target/release/aoc2024-rust
+    - name: Build
+      run: cargo build
