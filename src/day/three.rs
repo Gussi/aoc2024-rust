@@ -1,11 +1,14 @@
 pub mod part {
 
+    #[derive(Debug)]
     enum Opcode {
         Mul(i32, i32),
+        Do,
+        Dont,
     }
 
     pub fn one(input: &str) -> i32 {
-        let opcodes = get_mul_opcodes(input);
+        let opcodes = get_opcodes(input);
 
         let mut result = 0;
 
@@ -14,6 +17,7 @@ pub mod part {
                 Opcode::Mul(a, b) => {
                     result += a * b;
                 }
+                _ => {}
             }
         }
 
@@ -27,17 +31,54 @@ pub mod part {
     }
 
     pub fn two(_input: &str) -> i32 {
-        0
+        let mut do_multiplication = true;
+        let opcodes = get_opcodes(_input);
+
+        let mut result = 0;
+
+        for opcode in opcodes {
+            match opcode {
+                Opcode::Mul(a, b) => {
+                    if do_multiplication {
+                        result += a * b;
+                    }
+                }
+                Opcode::Do => {
+                    do_multiplication = true;
+                }
+                Opcode::Dont => {
+                    do_multiplication = false;
+                }
+            }
+        }
+
+        result
     }
 
-    fn get_mul_opcodes(input: &str) -> Vec<Opcode> {
+    #[test]
+    fn two_test() {
+        let input = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))";
+        assert_eq!(two(input), 48);
+    }
+
+    fn get_opcodes(input: &str) -> Vec<Opcode> {
         let mut opcodes = Vec::new();
 
-        let re = regex::Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
+        let re = regex::Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)").unwrap();
         for cap in re.captures_iter(input) {
-            let a = cap[1].parse::<i32>().unwrap();
-            let b = cap[2].parse::<i32>().unwrap();
-            opcodes.push(Opcode::Mul(a, b));
+            match &cap[0] {
+                "do()" => {
+                    opcodes.push(Opcode::Do);
+                }
+                "don't()" => {
+                    opcodes.push(Opcode::Dont);
+                }
+                _ => {
+                    let a = cap[1].parse::<i32>().unwrap();
+                    let b = cap[2].parse::<i32>().unwrap();
+                    opcodes.push(Opcode::Mul(a, b));
+                }
+            }
         }
         
         opcodes
