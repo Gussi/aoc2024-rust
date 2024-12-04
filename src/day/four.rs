@@ -93,7 +93,7 @@ pub mod part {
                 _ => false,
             };
 
-            return diag_left && diag_right;
+            diag_left && diag_right
         }
     }
 

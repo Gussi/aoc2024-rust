@@ -50,7 +50,7 @@ pub mod part {
 
                 let difference = (level - next_level).abs();
 
-                if difference < 1 || difference > 3 {
+                if !(1..=3).contains(&difference) {
                     return Safety::Unsafe(i as i32);
                 }
             }
@@ -62,10 +62,10 @@ pub mod part {
     pub fn one(input: &str) -> i32 {
         let reports = get_reports(input);
 
-        return reports
+        reports
             .iter()
             .filter(|&report| report.safe().eq(&Safety::Safe))
-            .count() as i32;
+            .count() as i32
     }
 
     #[test]
@@ -93,7 +93,7 @@ pub mod part {
             }
         }
 
-        return total_safe_reports;
+        total_safe_reports
     }
 
     #[test]

@@ -13,11 +13,8 @@ pub mod part {
         let mut result = 0;
 
         for opcode in opcodes {
-            match opcode {
-                Opcode::Mul(a, b) => {
-                    result += a * b;
-                }
-                _ => {}
+            if let Opcode::Mul(a, b) = opcode {
+                result += a * b;
             }
         }
 
