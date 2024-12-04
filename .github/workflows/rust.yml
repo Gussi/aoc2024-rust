@@ -1,0 +1,40 @@
+name: Advent of Code 2024 🎄
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build 🏗️
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build
+      run: cargo build
+
+  lint:
+    name: Lint 🧹
+    runs-on: ubuntu-latest
+    dependencies: build
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Lint
+      run: cargo clippy
+
+  test:
+    name: Test 🧪
+    runs-on: ubuntu-latest
+    dependencies: build
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Test
+      run: cargo test
