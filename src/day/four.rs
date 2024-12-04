@@ -1,8 +1,17 @@
 pub mod part {
-    #[derive(Copy, Clone, Debug, PartialEq)]
+    #[derive(Copy, Clone)]
     struct Point {
         x: i32,
         y: i32,
+    }
+
+    impl Point {
+        fn add(&self, other: Point) -> Point {
+            Point {
+                x: self.x + other.x,
+                y: self.y + other.y,
+            }
+        }
     }
 
     struct Grid {
@@ -25,44 +34,66 @@ pub mod part {
             }
         }
 
+        fn check_xmas(&self, point: Point) -> i32 {
+            let word = "XMAS".to_string();
+            let mut total = 0;
+
+            for direction in ONE_DIRECTIONS.iter() {
+                let mut found = true;
+                let mut point = point;
+
+                for letter in word.chars() {
+                    if self.out_of_bounds(&point) {
+                        found = false;
+                        break;
+                    }
+
+                    if self.char_at_point(point).unwrap() != letter {
+                        found = false;
+                        break;
+                    }
+
+                    point = point.add(*direction);
+                }
+
+                if found {
+                    total += 1;
+                }
+            }
+
+            total
+        }
+
         fn check_x_mas(&self, point: Point) -> bool {
             if self.char_at_point(point).unwrap() != 'A' {
                 return false;
             }
 
-            let diag_left = match self.char_at_point(Point { x: point.x - 1, y: point.y - 1 }) {
-                Some('M') => match self.char_at_point(Point { x: point.x + 1, y: point.y + 1 }) {
+            let diag_left = match self.char_at_point(point.add(Point { x: -1, y: -1 })) {
+                Some('M') => match self.char_at_point(point.add(Point { x: 1, y: 1 })) {
                     Some('S') => true,
                     _ => false,
                 },
-                Some('S') => match self.char_at_point(Point { x: point.x + 1, y: point.y + 1 }) {
+                Some('S') => match self.char_at_point(point.add(Point { x: 1, y: 1 })) {
                     Some('M') => true,
                     _ => false,
                 },
-                _ => return false,
+                _ => false,
             };
 
-            if !diag_left {
-                return false;
-            }
-
-             let diag_right = match self.char_at_point(Point { x: point.x - 1, y: point.y + 1 }) {
-                Some('M') => match self.char_at_point(Point { x: point.x + 1, y: point.y - 1 }) {
+            let diag_right = match self.char_at_point(point.add(Point { x: -1, y: 1 })) {
+                Some('M') => match self.char_at_point(point.add(Point { x: 1, y: -1 })) {
                     Some('S') => true,
                     _ => false,
                 },
-                Some('S') => match self.char_at_point(Point { x: point.x + 1, y: point.y - 1 }) {
+                Some('S') => match self.char_at_point(point.add(Point { x: 1, y: -1 })) {
                     Some('M') => true,
                     _ => false,
                 },
-                _ => return false,
+                _ => false,
             };
 
-            if !diag_right {
-                return false;
-            }
-
-            true
+            return diag_left && diag_right;
         }
     }
 
@@ -79,36 +110,11 @@ pub mod part {
 
     pub fn one(input: &str) -> i32 {
         let grid = parse_input(input);
-        let word = "XMAS".to_string();
-
         let mut total = 0;
 
         for (x, row) in grid.grid.iter().enumerate() {
             for (y, _) in row.iter().enumerate() {
-                // Search for the word in every direction
-                for direction in ONE_DIRECTIONS.iter() {
-                    let mut point = Point { x: x as i32, y: y as i32 };
-                    let mut found = true;
-
-                    for letter in word.chars() {
-                        if grid.out_of_bounds(&point) {
-                            found = false;
-                            break;
-                        }
-
-                        if grid.char_at_point(point).unwrap() != letter {
-                            found = false;
-                            break;
-                        }
-
-                        point.x += direction.x;
-                        point.y += direction.y;
-                    }
-
-                    if found {
-                        total += 1;
-                    }
-                }
+                total += grid.check_xmas(Point { x: x as i32, y: y as i32 });
             }
         }
 
@@ -117,17 +123,7 @@ pub mod part {
 
     #[test]
     pub fn one_test() {
-        let input = "MMMSXXMASM
-MSAMXMSMSA
-AMXSXMAAMM
-MSAMASMSMX
-XMASAMXAMM
-XXAMMXXAMA
-SMSMSASXSS
-SAXAMASAAA
-MAMMMXMMMM
-MXMXAXMASX";
-
+        let input = "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX";
         assert_eq!(one(input), 18);
     }
 
@@ -150,16 +146,7 @@ MXMXAXMASX";
 
     #[test]
     pub fn two_test() {
-        let input = "MMMSXXMASM
-MSAMXMSMSA
-AMXSXMAAMM
-MSAMASMSMX
-XMASAMXAMM
-XXAMMXXAMA
-SMSMSASXSS
-SAXAMASAAA
-MAMMMXMMMM
-MXMXAXMASX";
+        let input = "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX";
         assert_eq!(two(input), 9);
     }
 
