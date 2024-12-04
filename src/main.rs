@@ -19,33 +19,32 @@ fn main() {
     let mut input = String::new();
     std::io::stdin().read_to_string(&mut input).unwrap();
 
-    match args {
-        Args { day, part } => {
-            let answer = match day {
-                1 => match part {
-                    1 => day::one::part::one(&input),
-                    2 => day::one::part::two(&input),
-                    _ => panic!("Invalid part"),
-                },
-                2 => match part {
-                    1 => day::two::part::one(&input),
-                    2 => day::two::part::two(&input),
-                    _ => panic!("Invalid part"),
-                },
-                3 => match part {
-                    1 => day::three::part::one(&input),
-                    2 => day::three::part::two(&input),
-                    _ => panic!("Invalid part"),
-                },
-                4 => match part {
-                    1 => day::four::part::one(&input),
-                    2 => day::four::part::two(&input),
-                    _ => panic!("Invalid part"),
-                },
-                _ => panic!("Invalid day"),
-            };
+    let Args { day, part } = args;
+    {
+        let answer = match day {
+            1 => match part {
+                1 => day::one::part::one(&input),
+                2 => day::one::part::two(&input),
+                _ => panic!("Invalid part"),
+            },
+            2 => match part {
+                1 => day::two::part::one(&input),
+                2 => day::two::part::two(&input),
+                _ => panic!("Invalid part"),
+            },
+            3 => match part {
+                1 => day::three::part::one(&input),
+                2 => day::three::part::two(&input),
+                _ => panic!("Invalid part"),
+            },
+            4 => match part {
+                1 => day::four::part::one(&input),
+                2 => day::four::part::two(&input),
+                _ => panic!("Invalid part"),
+            },
+            _ => panic!("Invalid day"),
+        };
 
-            println!("Day {} Part {}: {}", day, part, answer);
-        }
+        println!("Day {} Part {}: {}", day, part, answer);
     }
 }

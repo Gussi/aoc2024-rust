@@ -70,26 +70,14 @@ pub mod part {
             }
 
             let diag_left = match self.char_at_point(point.add(Point { x: -1, y: -1 })) {
-                Some('M') => match self.char_at_point(point.add(Point { x: 1, y: 1 })) {
-                    Some('S') => true,
-                    _ => false,
-                },
-                Some('S') => match self.char_at_point(point.add(Point { x: 1, y: 1 })) {
-                    Some('M') => true,
-                    _ => false,
-                },
+                Some('M') => matches!(self.char_at_point(point.add(Point { x: 1, y: 1 })), Some('S')),
+                Some('S') => matches!(self.char_at_point(point.add(Point { x: 1, y: 1 })), Some('M')),
                 _ => false,
             };
 
             let diag_right = match self.char_at_point(point.add(Point { x: -1, y: 1 })) {
-                Some('M') => match self.char_at_point(point.add(Point { x: 1, y: -1 })) {
-                    Some('S') => true,
-                    _ => false,
-                },
-                Some('S') => match self.char_at_point(point.add(Point { x: 1, y: -1 })) {
-                    Some('M') => true,
-                    _ => false,
-                },
+                Some('M') => matches!(self.char_at_point(point.add(Point { x: 1, y: -1 })), Some('S')),
+                Some('S') => matches!(self.char_at_point(point.add(Point { x: 1, y: -1 })), Some('M')),
                 _ => false,
             };
 
