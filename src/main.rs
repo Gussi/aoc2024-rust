@@ -37,6 +37,11 @@ fn main() {
                     2 => day::three::part::two(&input),
                     _ => panic!("Invalid part"),
                 },
+                4 => match part {
+                    1 => day::four::part::one(&input),
+                    2 => day::four::part::two(&input),
+                    _ => panic!("Invalid part"),
+                },
                 _ => panic!("Invalid day"),
             };
 
