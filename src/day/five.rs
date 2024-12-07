@@ -27,6 +27,36 @@ pub mod part {
             answer
         }
 
+        fn solve_two(&self) -> i32 {
+            let mut answer = 0;
+
+            for update in &self.updates {
+                if !self.is_valid(update) {
+                    let fixed_update = self.fix_update(update);
+                    answer += fixed_update[fixed_update.len() / 2];
+                }
+            }
+
+            answer
+        }
+
+        fn fix_update(&self, update: &SafetyUpdate) -> SafetyUpdate {
+            let mut fixed_update = update.clone();
+
+            for (i, &a) in update.iter().enumerate() {
+                for (j, &b) in update.iter().enumerate().skip(i+1) {
+                    if !self.rules.contains(&(a, b)) {
+                        fixed_update[i] = b;
+                        fixed_update[j] = a;
+
+                        return self.fix_update(&fixed_update);
+                    }
+                }
+            }
+
+            fixed_update
+        }
+
         // take pointer to specific update
         fn is_valid(&self, update: &SafetyUpdate) -> bool {
             for (i, &a) in update.iter().enumerate() {
@@ -83,13 +113,17 @@ pub mod part {
 
     pub fn one(input: &str) -> i32 {
         let manual = SafetyManual::new_from_input(input);
-
         manual.solve_one()
     }
 
-    #[test]
-    fn test_one() {
-        let input = "47|53
+    pub fn two(_input: &str) -> i32 {
+        let manual = SafetyManual::new_from_input(_input);
+        manual.solve_two()
+    }
+
+
+    #[cfg(test)]
+    const TEST_INPUT: &str = "47|53
 97|13
 97|61
 97|47
@@ -118,16 +152,13 @@ pub mod part {
 61,13,29
 97,13,75,29,47";
 
-        assert_eq!(one(input), 143);
-    }
-
-    pub fn two(_input: &str) -> i32 {
-        0
+    #[test]
+    fn test_one() {
+        assert_eq!(one(TEST_INPUT), 143);
     }
 
     #[test]
     fn test_two() {
-        let input = "";
-        assert_eq!(two(input), 0);
+        assert_eq!(two(TEST_INPUT), 123);
     }
 }
