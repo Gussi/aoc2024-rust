@@ -1,7 +1,7 @@
 pub mod part {
     use std::collections::HashSet;
 
-    #[derive(Copy, Clone)]
+    #[derive(Copy, Clone, Eq, PartialEq, Hash)]
     enum Direction {
         Up,
         Down,
@@ -14,6 +14,10 @@ pub mod part {
         x: usize,
         y: usize,
         direction: Direction,
+
+        _x: usize,
+        _y: usize,
+        _direction: Direction,
     }
 
     impl Guard {
@@ -32,10 +36,10 @@ pub mod part {
 
         fn is_blocked(&self, grid: &Grid) -> bool {
             match self.direction {
-                Direction::Up => grid.grid[self.x - 1][self.y] == '#',
-                Direction::Down => grid.grid[self.x + 1][self.y] == '#',
-                Direction::Left => grid.grid[self.x][self.y - 1] == '#',
-                Direction::Right => grid.grid[self.x][self.y + 1] == '#',
+                Direction::Up => grid.grid[self.x - 1][self.y] != '.',
+                Direction::Down => grid.grid[self.x + 1][self.y] != '.',
+                Direction::Left => grid.grid[self.x][self.y - 1] != '.',
+                Direction::Right => grid.grid[self.x][self.y + 1] != '.',
             }
         }
 
@@ -67,6 +71,37 @@ pub mod part {
 
             visited.len()
         }
+
+        fn walk_is_looping(&mut self, grid: &Grid) -> bool {
+            let mut visited: HashSet<(usize, usize, Direction)> = HashSet::new();
+            let mut steps = 0;
+
+            while !self.is_facing_edge(grid) {
+                self.walk(grid);
+                steps += 1;
+
+                if steps > 10000 {
+                    panic!("Guard has abnormally high number of steps");
+                }
+
+                if visited.contains(&(self.x, self.y, self.direction)) {
+                    self.reset();
+                    return true;
+                }
+
+                visited.insert((self.x, self.y, self.direction));
+            }
+
+            self.reset();
+
+            false
+        }
+
+        fn reset(&mut self) {
+            self.x = self._x;
+            self.y = self._y;
+            self.direction = self._direction;
+        }
     }
 
     struct Grid {
@@ -87,16 +122,38 @@ pub mod part {
                 x: 0,
                 y: 0,
                 direction: Direction::Up,
+
+                _x: 0,
+                _y: 0,
+                _direction: Direction::Up,
             };
+
             for (x, row) in grid.iter().enumerate() {
                 for (y, _) in row.iter().enumerate() {
                     if grid[x][y] == '^' {
-                        guard = Guard { x, y, direction: Direction::Up };
+                        guard = Guard { x, y, direction: Direction::Up, _x: x, _y: y, _direction: Direction::Up };
                     }
                 }
             }
 
+            grid[guard.x][guard.y] = '.';
+
             (Grid { grid }, guard)
+        }
+
+        fn block(&mut self, x: usize, y: usize) -> bool {
+            if self.grid[x][y] == '.' {
+                self.grid[x][y] = 'O';
+                return true;
+            }
+
+            false
+        }
+
+        fn unblock(&mut self, x: usize, y: usize) {
+            if self.grid[x][y] == 'O' {
+                self.grid[x][y] = '.';
+            }
         }
     }
     
@@ -106,8 +163,24 @@ pub mod part {
         guard.walk_until_facing_edge(&grid) as i32
     }
 
-    pub fn two(_input: &str) -> i32 {
-        0
+    pub fn two(input: &str) -> i32 {
+        let (mut grid, mut guard) = Grid::from_input(input);
+        let mut answer = 0;
+
+        for x in 0..grid.grid.len() {
+            for y in 0..grid.grid[0].len() {
+                if grid.block(x, y) {
+
+                    if guard.walk_is_looping(&grid) {
+                        answer += 1;
+                    }
+
+                    grid.unblock(x, y);
+                }
+            }
+        }
+
+        answer
     }
 
     #[cfg(test)]
@@ -129,6 +202,6 @@ pub mod part {
 
     #[test]
     fn test_part_two() {
-        assert_eq!(two(TEST_INPUT), 0);
+        assert_eq!(two(TEST_INPUT), 6);
     }
 }
