@@ -4,7 +4,7 @@ pub mod part {
         let mut total = 0;
 
         for equation in equations {
-            if equation.solvable() {
+            if equation.solvable_part_one() {
                 total += equation.answer;
             }
         }
@@ -13,13 +13,23 @@ pub mod part {
     }
 
     pub fn two(_input: &str) -> usize {
-        0
+        let equations = parse_input(_input);
+        let mut total = 0;
+
+        for equation in equations {
+            if equation.solvable_part_two() {
+                total += equation.answer;
+            }
+        }
+
+        total
     }
 
-    #[derive(Clone, Copy)]
+    #[derive(Clone, Copy, Debug)]
     enum Operators {
         Add,
         Multiply,
+        Concatenate,
     }
 
     struct Equation {
@@ -36,20 +46,46 @@ pub mod part {
             Equation { answer, numbers }
         }
 
-        fn solvable(&self) -> bool {
-            let operations = generate_operator_combinations(self.numbers.len() - 1);
+        fn solvable_part_one(&self) -> bool {
+            let combos = vec![vec![Operators::Add], vec![Operators::Multiply]];
+            let operations = generate_operator_combinations(self.numbers.len() - 1, combos);
 
             for operation in operations {
-                let mut result = self.numbers[0];
+                if self.solve(operation) == self.answer {
+                    return true;
+                }
+            }
 
-                for (i, operator) in operation.iter().enumerate() {
-                    match operator {
-                        Operators::Add => result += self.numbers[i + 1],
-                        Operators::Multiply => result *= self.numbers[i + 1],
+            false
+        }
+
+        fn solve(&self, operators: Vec<Operators>) -> usize {
+            let mut result = self.numbers[0];
+
+            for (i, operator) in operators.iter().enumerate() {
+                println!("{:?} {:?}", operator, self.numbers[i + 1]);
+                match operator {
+                    Operators::Add => result += self.numbers[i + 1],
+                    Operators::Multiply => result *= self.numbers[i + 1],
+                    Operators::Concatenate => {
+                        let first = result.to_string();
+                        let second = self.numbers[i + 1].to_string();
+
+                        result = format!("{}{}", first, second).parse().unwrap();
+                        println!("Concatenating {} and {} to get {}", first, second, result);
                     }
                 }
+            }
 
-                if result == self.answer {
+            result
+        }
+
+        fn solvable_part_two(&self) ->bool {
+            let combos = vec![vec![Operators::Add], vec![Operators::Multiply], vec![Operators::Concatenate]];
+            let operations = generate_operator_combinations(self.numbers.len() - 1, combos);
+
+            for operation in operations {
+                if self.solve(operation) == self.answer {
                     return true;
                 }
             }
@@ -58,13 +94,12 @@ pub mod part {
         }
     }
 
-	fn generate_operator_combinations(slots: usize) -> Vec<Vec<Operators>> {
+	fn generate_operator_combinations(slots: usize, mut combos: Vec<Vec<Operators>>) -> Vec<Vec<Operators>> {
 		if slots == 0 {
 			return vec![vec![]];
 		}
 
 		let mut results = Vec::new();
-		let mut combos = vec![vec![Operators::Add], vec![Operators::Multiply]];
 
 		for _ in 1..slots {
 			let mut new_combos = Vec::new();
@@ -83,6 +118,7 @@ pub mod part {
 		}
 
 		results.extend(combos);
+
 		results
 	}
 
@@ -111,6 +147,6 @@ pub mod part {
 
     #[test]
     pub fn test_two() {
-        assert_eq!(two(TEST_INPUT), 0);
+        assert_eq!(two(TEST_INPUT), 11387);
     }
 }
