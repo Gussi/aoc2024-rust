@@ -44,17 +44,14 @@ pub fn second(input: &str) -> usize {
     result as usize
 }
 
-#[cfg(test)]
-const TEST_INPUT: &str = include_str!("../../test/fixture/three.txt");
-
 #[test]
 fn test_first() {
-    assert_eq!(first(TEST_INPUT), 161);
+    assert_eq!(first(include_str!("../../test/fixture/three_first.txt")), 161);
 }
 
 #[test]
 fn test_second() {
-    assert_eq!(second(TEST_INPUT), 48);
+    assert_eq!(second(include_str!("../../test/fixture/three_second.txt")), 48);
 }
 
 fn get_opcodes(input: &str) -> Vec<Opcode> {
