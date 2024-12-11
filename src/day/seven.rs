@@ -47,8 +47,7 @@ pub mod part {
         }
 
         fn solvable_part_one(&self) -> bool {
-            let combos = vec![vec![Operators::Add], vec![Operators::Multiply]];
-            let operations = generate_operator_combinations(self.numbers.len() - 1, combos);
+            let operations = generate_operator_combinations_part_one(self.numbers.len() - 1);
 
             for operation in operations {
                 if self.solve(operation) == self.answer {
@@ -92,67 +91,67 @@ pub mod part {
         }
     }
 
-	fn generate_operator_combinations_part_two(slots: usize) -> Vec<Vec<Operators>> {
-		if slots == 0 {
-			return vec![vec![]];
-		}
+    fn generate_operator_combinations_part_two(slots: usize) -> Vec<Vec<Operators>> {
+        if slots == 0 {
+            return vec![vec![]];
+        }
 
         let mut combos = vec![vec![Operators::Add], vec![Operators::Multiply], vec![Operators::Concatenate]];
+        let mut results = Vec::new();
 
-		let mut results = Vec::new();
+        for _ in 1..slots {
+            let mut new_combos = Vec::new();
 
-		for _ in 1..slots {
-			let mut new_combos = Vec::new();
+            for c in &combos {
+                let mut add_combo = c.clone();
+                add_combo.push(Operators::Add);
+                new_combos.push(add_combo);
 
-			for c in &combos {
-				let mut add_combo = c.clone();
-				add_combo.push(Operators::Add);
-				new_combos.push(add_combo);
-
-				let mut mul_combo = c.clone();
-				mul_combo.push(Operators::Multiply);
-				new_combos.push(mul_combo);
+                let mut mul_combo = c.clone();
+                mul_combo.push(Operators::Multiply);
+                new_combos.push(mul_combo);
 
                 let mut concat_combo = c.clone();
                 concat_combo.push(Operators::Concatenate);
                 new_combos.push(concat_combo);
-			}
+            }
 
-			combos = new_combos;
-		}
+            combos = new_combos;
+        }
 
-		results.extend(combos);
+        results.extend(combos);
 
-		results
-	}
+        results
+    }
 
-	fn generate_operator_combinations(slots: usize, mut combos: Vec<Vec<Operators>>) -> Vec<Vec<Operators>> {
-		if slots == 0 {
-			return vec![vec![]];
-		}
+    fn generate_operator_combinations_part_one(slots: usize) -> Vec<Vec<Operators>> {
+        if slots == 0 {
+            return vec![vec![]];
+        }
+        let mut combos = vec![vec![Operators::Add], vec![Operators::Multiply]];
 
-		let mut results = Vec::new();
+        let mut results = Vec::new();
 
-		for _ in 1..slots {
-			let mut new_combos = Vec::new();
+        for _ in 1..slots {
+            let mut new_combos = Vec::new();
 
-			for c in &combos {
-				let mut add_combo = c.clone();
-				add_combo.push(Operators::Add);
-				new_combos.push(add_combo);
+            for c in &combos {
+                let mut add_combo = c.clone();
+                add_combo.push(Operators::Add);
+                new_combos.push(add_combo);
 
-				let mut mul_combo = c.clone();
-				mul_combo.push(Operators::Multiply);
-				new_combos.push(mul_combo);
-			}
+                let mut mul_combo = c.clone();
+                mul_combo.push(Operators::Multiply);
+                new_combos.push(mul_combo);
+            }
 
-			combos = new_combos;
-		}
+            combos = new_combos;
+        }
 
-		results.extend(combos);
+        results.extend(combos);
 
-		results
-	}
+        results
+    }
 
     fn parse_input(input: &str) -> Vec<Equation> {
         input
