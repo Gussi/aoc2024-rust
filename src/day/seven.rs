@@ -1,31 +1,24 @@
 pub mod part {
+
+    /// Solve part one of the challenge
     pub fn one(input: &str) -> usize {
-        let equations = parse_input(input);
-        let mut total = 0;
-
-        for equation in equations {
-            if equation.solvable_part_one() {
-                total += equation.answer;
-            }
-        }
-
-        total
+        Equation::from_input(input)
+            .iter()
+            .filter(|equation| equation.solvable(&[Operators::Add, Operators::Multiply]))
+            .map(|equation| equation.answer)
+            .sum()
     }
 
+    /// Solve part two of the challenge
     pub fn two(_input: &str) -> usize {
-        let equations = parse_input(_input);
-        let mut total = 0;
-
-        for equation in equations {
-            if equation.solvable_part_two() {
-                total += equation.answer;
-            }
-        }
-
-        total
+        Equation::from_input(_input)
+            .iter()
+            .filter(|equation| equation.solvable(&[Operators::Add, Operators::Multiply, Operators::Concatenate]))
+            .map(|equation| equation.answer)
+            .sum()
     }
 
-    #[derive(Clone, Copy, Debug)]
+    #[derive(Clone, Copy)]
     enum Operators {
         Add,
         Multiply,
@@ -38,28 +31,23 @@ pub mod part {
     }
 
     impl Equation {
-        fn new_from_input(input: &str) -> Self {
-            let mut parts = input.split(": ");
-            let answer = parts.next().unwrap().parse().unwrap();
-            let numbers = parts.next().unwrap().split(" ").map(|x| x.parse().unwrap()).collect();
 
-            Equation { answer, numbers }
+        fn from_input(input: &str) -> Vec<Self> {
+            input.lines().map(|line| {
+                let mut parts = line.split(": ");
+                let answer = parts.next().unwrap().parse().unwrap();
+                let numbers = parts.next().unwrap().split(" ").map(|n| n.parse().unwrap()).collect();
+                Self { answer, numbers }
+            }).collect()
         }
 
-        fn solvable_part_one(&self) -> bool {
-            let operations = generate_operator_combinations_part_one(self.numbers.len() - 1);
-
-            for operation in operations {
-                if self.solve(operation) == self.answer {
-                    return true;
-                }
-            }
-
-            false
+        fn solvable(&self, operators: &[Operators]) -> bool {
+            generate_operator_combinations(self.numbers.len() - 1, operators)
+                .iter()
+                .any(|operation| self.solve(operation.clone()) == self.answer)
         }
 
         fn solve(&self, operators: Vec<Operators>) -> usize {
-
             let mut result = self.numbers[0];
 
             for (i, operator) in operators.iter().enumerate() {
@@ -77,87 +65,28 @@ pub mod part {
 
             result
         }
-
-        fn solvable_part_two(&self) ->bool {
-            let operations = generate_operator_combinations_part_two(self.numbers.len() - 1);
-
-            for operation in operations {
-                if self.solve(operation.clone()) == self.answer {
-                    return true;
-                }
-            }
-
-            false
-        }
     }
 
-    fn generate_operator_combinations_part_two(slots: usize) -> Vec<Vec<Operators>> {
+    fn generate_operator_combinations(slots: usize, possible_ops: &[Operators]) -> Vec<Vec<Operators>> {
         if slots == 0 {
             return vec![vec![]];
         }
 
-        let mut combos = vec![vec![Operators::Add], vec![Operators::Multiply], vec![Operators::Concatenate]];
-        let mut results = Vec::new();
-
-        for _ in 1..slots {
-            let mut new_combos = Vec::new();
-
-            for c in &combos {
-                let mut add_combo = c.clone();
-                add_combo.push(Operators::Add);
-                new_combos.push(add_combo);
-
-                let mut mul_combo = c.clone();
-                mul_combo.push(Operators::Multiply);
-                new_combos.push(mul_combo);
-
-                let mut concat_combo = c.clone();
-                concat_combo.push(Operators::Concatenate);
-                new_combos.push(concat_combo);
-            }
-
-            combos = new_combos;
+        if slots == 1 {
+            return possible_ops.iter().map(|&op| vec![op]).collect();
         }
-
-        results.extend(combos);
-
-        results
-    }
-
-    fn generate_operator_combinations_part_one(slots: usize) -> Vec<Vec<Operators>> {
-        if slots == 0 {
-            return vec![vec![]];
-        }
-        let mut combos = vec![vec![Operators::Add], vec![Operators::Multiply]];
 
         let mut results = Vec::new();
-
-        for _ in 1..slots {
-            let mut new_combos = Vec::new();
-
-            for c in &combos {
-                let mut add_combo = c.clone();
-                add_combo.push(Operators::Add);
-                new_combos.push(add_combo);
-
-                let mut mul_combo = c.clone();
-                mul_combo.push(Operators::Multiply);
-                new_combos.push(mul_combo);
+        let smaller_combos = generate_operator_combinations(slots - 1, possible_ops);
+        for combo in smaller_combos {
+            for &op in possible_ops {
+                let mut new_combo = combo.clone();
+                new_combo.push(op);
+                results.push(new_combo);
             }
-
-            combos = new_combos;
         }
 
-        results.extend(combos);
-
         results
-    }
-
-    fn parse_input(input: &str) -> Vec<Equation> {
-        input
-            .lines()
-            .map(|line| Equation::new_from_input(line))
-            .collect()
     }
 
     #[cfg(test)]
