@@ -1,61 +1,55 @@
-/// Contains both parts of the problem.
-pub mod part {
+/// Solves the first part of the problem.
+pub fn first(input: &str) -> usize {
+    let (mut first_list_of_numbers, mut second_list_of_numbers) = get_list_of_numbers(input);
 
-    /// Solves the first part of the problem.
-    pub fn one (input: &str) -> usize {
-        let (mut first_list_of_numbers, mut second_list_of_numbers) = get_list_of_numbers(input);
+    first_list_of_numbers.sort();
+    second_list_of_numbers.sort();
 
-        first_list_of_numbers.sort();
-        second_list_of_numbers.sort();
-
-        let mut total_distance = 0;
-        for (first, second) in first_list_of_numbers.iter().zip(second_list_of_numbers.iter()) {
-            total_distance += (first - second).abs();
-        }
-
-        total_distance as usize
+    let mut total_distance = 0;
+    for (first, second) in first_list_of_numbers.iter().zip(second_list_of_numbers.iter()) {
+        total_distance += (first - second).abs();
     }
 
-    /// Solves the second part of the problem.
-    pub fn two(input: &str) -> usize {
-        let (first_list_of_numbers, second_list_of_numbers) = get_list_of_numbers(input);
+    total_distance as usize
+}
 
-        let mut total_similarity = 0;
-        for number in first_list_of_numbers.iter() {
-            let occurences = second_list_of_numbers.iter().filter(|&n| n == number).count() as i32;
-            total_similarity += number * occurences;
-        }
+/// Solves the second part of the problem.
+pub fn second(input: &str) -> usize {
+    let (first_list_of_numbers, second_list_of_numbers) = get_list_of_numbers(input);
 
-        total_similarity as usize
+    let mut total_similarity = 0;
+    for number in first_list_of_numbers.iter() {
+        let occurences = second_list_of_numbers.iter().filter(|&n| n == number).count() as i32;
+        total_similarity += number * occurences;
     }
 
-    /// Parses the input and returns two lists of numbers, left and right.
-    fn get_list_of_numbers(input: &str) -> (Vec<i32>, Vec<i32>) {
-        let mut first_list_of_numbers = Vec::new();
-        let mut second_list_of_numbers = Vec::new();
+    total_similarity as usize
+}
 
-        for line in input.lines() {
-            let mut numbers = line.split("   ");
-            first_list_of_numbers.push(numbers.next().unwrap().parse::<i32>().unwrap());
-            second_list_of_numbers.push(numbers.next().unwrap().parse::<i32>().unwrap());
-        }
+/// Parses the input and returns two lists of numbers, left and right.
+fn get_list_of_numbers(input: &str) -> (Vec<i32>, Vec<i32>) {
+    let mut first_list_of_numbers = Vec::new();
+    let mut second_list_of_numbers = Vec::new();
 
-        (first_list_of_numbers, second_list_of_numbers)
+    for line in input.lines() {
+        let mut numbers = line.split("   ");
+        first_list_of_numbers.push(numbers.next().unwrap().parse::<i32>().unwrap());
+        second_list_of_numbers.push(numbers.next().unwrap().parse::<i32>().unwrap());
     }
 
-    /// The input for the tests.
-    #[cfg(test)]
-    const TEST_INPUT: &str = "3   4\n4   3\n2   5\n1   3\n3   9\n3   3";
+    (first_list_of_numbers, second_list_of_numbers)
+}
 
-    /// Tests the first part of the problem.
-    #[test]
-    fn test_one() {
-        assert_eq!(one(TEST_INPUT), 11);
-    }
+/// Tests the first part of the problem.
+#[test]
+fn test_one() {
+    let input = include_str!("../../test/fixture/one.txt");
+    assert_eq!(first(input), 11);
+}
 
-    /// Tests the second part of the problem.
-    #[test]
-    fn test_two() {
-        assert_eq!(two(TEST_INPUT), 31);
-    }
+/// Tests the second part of the problem.
+#[test]
+fn test_two() {
+    let input = include_str!("../../test/fixture/one.txt");
+    assert_eq!(second(input), 31);
 }

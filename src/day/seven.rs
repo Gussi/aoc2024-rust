@@ -10,8 +10,8 @@ pub mod part {
     }
 
     /// Solve part two of the challenge
-    pub fn two(_input: &str) -> usize {
-        Equation::from_input(_input)
+    pub fn two(input: &str) -> usize {
+        Equation::from_input(input)
             .iter()
             .filter(|equation| equation.solvable(&[Operators::Add, Operators::Multiply, Operators::Concatenate]))
             .map(|equation| equation.answer)

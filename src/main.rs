@@ -23,8 +23,8 @@ fn main() {
     {
         let answer = match day {
             1 => match part {
-                1 => day::one::part::one(&input),
-                2 => day::one::part::two(&input),
+                1 => day::one::first(&input),
+                2 => day::one::second(&input),
                 _ => panic!("Invalid part"),
             },
             2 => match part {
