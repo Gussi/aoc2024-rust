@@ -2,7 +2,7 @@
 pub mod part {
 
     /// Solves the first part of the problem.
-    pub fn one (input: &str) -> i32 {
+    pub fn one (input: &str) -> usize {
         let (mut first_list_of_numbers, mut second_list_of_numbers) = get_list_of_numbers(input);
 
         first_list_of_numbers.sort();
@@ -13,11 +13,11 @@ pub mod part {
             total_distance += (first - second).abs();
         }
 
-        total_distance
+        total_distance as usize
     }
 
     /// Solves the second part of the problem.
-    pub fn two(input: &str) -> i32 {
+    pub fn two(input: &str) -> usize {
         let (first_list_of_numbers, second_list_of_numbers) = get_list_of_numbers(input);
 
         let mut total_similarity = 0;
@@ -26,7 +26,7 @@ pub mod part {
             total_similarity += number * occurences;
         }
 
-        total_similarity
+        total_similarity as usize
     }
 
     /// Parses the input and returns two lists of numbers, left and right.

@@ -157,13 +157,13 @@ pub mod part {
         }
     }
     
-    pub fn one(input: &str) -> i32 {
+    pub fn one(input: &str) -> usize {
         let (grid, mut guard) = Grid::from_input(input);
 
-        guard.walk_until_facing_edge(&grid) as i32
+        guard.walk_until_facing_edge(&grid) as usize
     }
 
-    pub fn two(input: &str) -> i32 {
+    pub fn two(input: &str) -> usize {
         let (mut grid, mut guard) = Grid::from_input(input);
         let mut answer = 0;
 
@@ -180,7 +180,7 @@ pub mod part {
             }
         }
 
-        answer
+        answer as usize
     }
 
     #[cfg(test)]

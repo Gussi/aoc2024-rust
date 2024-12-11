@@ -1,5 +1,5 @@
 pub mod part {
-    pub fn one(input: &str) -> i32 {
+    pub fn one(input: &str) -> usize {
         let equations = parse_input(input);
         let mut total = 0;
 
@@ -9,12 +9,10 @@ pub mod part {
             }
         }
 
-        println!("Total: {}", total);
-
-        total as i32
+        total
     }
 
-    pub fn two(_input: &str) -> i32 {
+    pub fn two(_input: &str) -> usize {
         0
     }
 
@@ -25,8 +23,8 @@ pub mod part {
     }
 
     struct Equation {
-        answer: i64,
-        numbers: Vec<i64>,
+        answer: usize,
+        numbers: Vec<usize>,
     }
 
     impl Equation {

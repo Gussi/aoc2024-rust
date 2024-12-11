@@ -7,7 +7,7 @@ pub mod part {
         Dont,
     }
 
-    pub fn one(input: &str) -> i32 {
+    pub fn one(input: &str) -> usize {
         let opcodes = get_opcodes(input);
 
         let mut result = 0;
@@ -18,7 +18,7 @@ pub mod part {
             }
         }
 
-        result
+        result as usize
     }
 
     #[test]
@@ -27,7 +27,7 @@ pub mod part {
         assert_eq!(one(input), 161);
     }
 
-    pub fn two(_input: &str) -> i32 {
+    pub fn two(_input: &str) -> usize {
         let mut do_multiplication = true;
         let opcodes = get_opcodes(_input);
 
@@ -49,7 +49,7 @@ pub mod part {
             }
         }
 
-        result
+        result as usize
     }
 
     #[test]

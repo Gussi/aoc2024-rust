@@ -111,14 +111,14 @@ pub mod part {
         }
     }
 
-    pub fn one(input: &str) -> i32 {
+    pub fn one(input: &str) -> usize {
         let manual = SafetyManual::new_from_input(input);
-        manual.solve_one()
+        manual.solve_one() as usize
     }
 
-    pub fn two(_input: &str) -> i32 {
+    pub fn two(_input: &str) -> usize {
         let manual = SafetyManual::new_from_input(_input);
-        manual.solve_two()
+        manual.solve_two() as usize
     }
 
 

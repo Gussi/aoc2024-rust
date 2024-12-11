@@ -96,7 +96,7 @@ pub mod part {
         Point { x: 1, y: 1 },
     ];
 
-    pub fn one(input: &str) -> i32 {
+    pub fn one(input: &str) -> usize {
         let grid = parse_input(input);
         let mut total = 0;
 
@@ -106,7 +106,7 @@ pub mod part {
             }
         }
 
-        total
+        total as usize
     }
 
     #[test]
@@ -115,7 +115,7 @@ pub mod part {
         assert_eq!(one(input), 18);
     }
 
-    pub fn two(input: &str) -> i32 {
+    pub fn two(input: &str) -> usize {
         let grid = parse_input(input);
         let mut total = 0;
 
@@ -129,7 +129,7 @@ pub mod part {
             }
         }
 
-        total
+        total as usize
     }
 
     #[test]

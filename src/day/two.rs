@@ -59,13 +59,13 @@ pub mod part {
         }
     }
 
-    pub fn one(input: &str) -> i32 {
+    pub fn one(input: &str) -> usize {
         let reports = get_reports(input);
 
         reports
             .iter()
             .filter(|&report| report.safe().eq(&Safety::Safe))
-            .count() as i32
+            .count()
     }
 
     #[test]
@@ -74,7 +74,7 @@ pub mod part {
         assert_eq!(one(input), 2);
     }
 
-    pub fn two(input: &str) -> i32 {
+    pub fn two(input: &str) -> usize {
         let reports = get_reports(input);
 
         let mut total_safe_reports = 0;
